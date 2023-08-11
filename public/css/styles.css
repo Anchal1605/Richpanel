@@ -1,0 +1,46 @@
+.center{
+    text-align:center;
+  }
+/* Login and Signup page */
+
+body{
+    margin: auto;
+    background-color: #1c4c94;
+}
+.card{
+    width:30%;
+    height: 50%;
+    margin: auto;
+    padding:6% 0;
+}
+.card-body{
+  padding: 50px 50px 20px 50px ;
+  background-color: #fefefe;
+  border-radius: 4%;
+
+}
+
+h3{
+    font-weight: bold;
+    padding: 2px;
+}
+
+.remember
+{
+    font-weight: lighter;
+    vertical-align: middle;
+    padding: 0 2px;
+}
+
+.submit
+{
+    padding: 8px 0;
+    margin: 25px auto;
+    border-radius: 2%;
+    background-color: #1c4c94;
+}
+
+.endLine
+{
+    padding:5px 0;
+}

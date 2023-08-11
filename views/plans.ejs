@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Available Plans</title>
+  <!-- Include Bootstrap 3 CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <style>
+    
+
+    .container {
+      margin-top: 20px;
+    }
+
+    .plans-container {
+      display: grid;
+      grid-template-columns: 1fr repeat(4, minmax(100px, 1fr));
+      grid-gap: 10px;
+      margin-top: 20px;
+    }
+
+    .plan-header {
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .toggle-container {
+      display: flex;
+      width:160px;
+      height: 50px;
+      margin:50px 0 50px 0 ;
+      background-color: #1c4c94;
+      border-radius: 25px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-label {
+      padding:2px;
+    }
+
+    .toggler {
+      display: inline-block;
+      padding: 8px 10px;
+      cursor: pointer;
+      border-radius: 20px;
+      color: #fff;
+      font-size: 15px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .toggler.active {
+      background-color: #fff;
+      color:#1c4c94;
+    }
+
+    .plan-header {
+      font-weight: bold;
+      text-align: center;
+      margin: 10px auto; /* Adjust the margin to reduce vertical space */
+      padding: 5px; /* Adjust the padding to reduce vertical space */
+      background-color: #7895bd; /* Change to your desired color */
+      width: 130px;
+      height: 100px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative; /* Added */
+    }
+
+    .plan-header.active-header {
+      background-color: #1f4d90;
+      color: #fff;
+    }
+
+    .plan-header.active-header::before {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: calc(50% - 10px);
+      border-width: 10px 10px 0;
+      border-style: solid;
+      border-color: transparent transparent #1f4d90 transparent;
+    }
+
+    .plan-card {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 5px;
+    }
+
+    .plan-card.active-column {
+      color: #1c4c94;
+    }
+
+    /* Inverted Triangle */
+    .plan-header.active-header::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: calc(50% - 10px);
+      border-width: 0 10px 10px;
+      border-style: solid;
+      border-color: #1f4d90 transparent transparent transparent;
+    }
+ /* ... Your existing CSS ... */
+
+.plan-header.active-header::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: calc(50% - 10px);
+  border-width: 10px 10px 0;
+  border-style: solid;
+  border-color: transparent transparent #1f4d90 transparent;
+  transform: rotate(180deg); /* Rotate the triangle to make it inverted */
+}
+
+
+    .next
+    {
+       background-color: #1c4c94;
+       width:25%;
+       margin: auto;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center">Available Plans</h1>
+    <div class="plans-container">
+      <div class="toggle-container">
+        <div class="toggler active" id="toggleMonthly">Monthly</div>
+        <div class="toggler" id="toggleYearly">Yearly</div>
+      </div>
+      <div class="plan-header active-header box" id="basic">Basic</div>
+      <div class="plan-header box" id="standard">Standard</div>
+      <div class="plan-header box " id="premium">Premium</div>
+      <div class="plan-header box" id="regular">Regular</div>
+
+      <div class="plan-rheader" id="priceHeader"><%= 'Monthly Prices' %></div>
+      <% plans.forEach(plan => { %>
+        <div class="plan-card price-card" data-plan="<%= JSON.stringify(plan) %>"><%= plan.monthly_price %> INR</div>
+      <% }); %>
+    </div>
+
+    <div class="plans-container">
+      <div class="plan-rheader">Video Quality</div>
+      <% plans.forEach(plan => { %>
+        <div class="plan-card"><%= plan.video_quality %></div>
+      <% }); %>
+    </div>
+
+    <div class="plans-container">
+      <div class="plan-rheader">Resolution</div>
+      <% plans.forEach(plan => { %>
+        <div class="plan-card"><%= plan.resolution %></div>
+      <% }); %>
+    </div>
+
+    <div class="plans-container">
+      <div class="plan-rheader">Devices you can use to watch</div>
+      <% plans.forEach(plan => { %>
+        <div class="plan-card">
+          <% plan.devices.forEach(device => { %>
+            <div><%= device %></div>
+          <% }); %>
+        </div>
+      <% }); %>
+    </div>
+    <form action="/payment" method="post">
+      <input type="hidden" id="selectedPlanPrice" name="selectedPlanPrice" value="">
+      <button class="btn btn-lg btn-primary next">Next</button>
+    </form>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const toggleMonthly = document.getElementById('toggleMonthly');
+        const toggleYearly = document.getElementById('toggleYearly');
+        const priceHeader = document.getElementById('priceHeader');
+        const priceCards = document.querySelectorAll('.price-card');
+        const planHeaders = document.querySelectorAll('.plan-header');
+
+        // Set the default selection to "Basic"
+        const basicHeader = document.getElementById('basic');
+        basicHeader.classList.add('active-header');
+        const basicIndex = Array.from(planHeaders).indexOf(basicHeader) + 1;
+        const basicCards = document.querySelectorAll(`.plan-card:nth-child(${basicIndex})`);
+        basicCards.forEach(card => card.classList.add('active-column'));
+        basicHeader.style.backgroundColor = '#1f4d90';
+
+        toggleMonthly.addEventListener('click', function () {
+          toggleMonthly.classList.add('active');
+          toggleYearly.classList.remove('active');
+          priceHeader.innerText = 'Monthly Prices';
+          priceCards.forEach(card => {
+            const plan = JSON.parse(card.getAttribute('data-plan'));
+            card.innerText = plan.monthly_price + ' INR';
+          });
+        });
+
+        toggleYearly.addEventListener('click', function () {
+          toggleYearly.classList.add('active');
+          toggleMonthly.classList.remove('active');
+          priceHeader.innerText = 'Yearly Prices';
+          priceCards.forEach(card => {
+            const plan = JSON.parse(card.getAttribute('data-plan'));
+            card.innerText = plan.yearly_price + ' INR';
+          });
+        });
+
+        planHeaders.forEach(header => {
+          header.addEventListener('click', function () {
+            planHeaders.forEach(h => h.classList.remove('active-header'));
+            header.classList.add('active-header');
+
+            const columnIndex = Array.from(planHeaders).indexOf(header) + 1;
+
+            const planCards = document.querySelectorAll(`.plan-card`);
+            planCards.forEach(card => card.classList.remove('active-column'));
+
+            const currentPlanCard = document.querySelector(`.plan-card:nth-child(${columnIndex})`);
+            currentPlanCard.classList.add('active-column');
+
+            planHeaders.forEach(h => {
+              h.style.backgroundColor = '#7895bd';
+              h.querySelector('.plan-header::before').style.borderTopColor = 'transparent';
+              h.querySelector('.plan-header::after').style.borderBottomColor = 'transparent';
+            });
+
+            header.style.backgroundColor = '#1f4d90';
+            header.querySelector('.plan-header::before').style.borderTopColor = '#1c4c94';
+            header.querySelector('.plan-header::after').style.borderBottomColor = '#1c4c94';
+          });
+        });
+      });
+      var boxes = document.querySelectorAll(".box");
+      for (var i = 0; i < boxes.length; i++) {
+       boxes[i].addEventListener("click", function() {
+    var triangle = document.createElement("div");
+    triangle.className = "triangle";
+    triangle.style.borderTopColor = this.style.backgroundColor;
+    triangle.style.borderTopWidth = "20px";
+    triangle.style.position = "absolute";
+    triangle.style.bottom = "-20px";
+    triangle.style.left = (this.offsetWidth - triangle.offsetWidth) / 2;
+    this.appendChild(triangle);
+  });
+}
+    </script>
+  </body>
+</html>
+
+
+
+
+
